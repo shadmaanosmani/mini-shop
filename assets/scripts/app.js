@@ -1,6 +1,9 @@
 class Component {
-  constructor(renderHookId) {
+  constructor(renderHookId, shouldRender = true) {
     this.renderHookId = renderHookId;
+    if (shouldRender) {
+      this.render();
+    }
   }
 
   createRootHtmlElement(tag, cssClassList, attributeList) {
@@ -28,8 +31,9 @@ class Product {
 
 class ProductItem extends Component {
   constructor(product, renderHookId) {
-    super(renderHookId);
+    super(renderHookId, false);
     this.product = product;
+    this.render();
   }
 
   render() {
@@ -98,41 +102,53 @@ class ShoppingCart extends Component {
   }
 }
 
-class Shop {
+class Shop extends Component {
+  constructor() {
+    super();
+  }
   render() {
     this.shoppingCart = new ShoppingCart("app");
-    this.shoppingCart.render();
-    const productList = new ProductList("app");
-   productList.render();
+    new ProductList("app");
   }
 }
 class ProductList extends Component {
+  productList = [];
+
   constructor(renderHookId) {
     super(renderHookId);
+    this.fetchProducts();
   }
 
-  products = [
-    new Product(
-      "A Pillow",
-      "https://www.maxpixel.net/static/photo/2x/Soft-Pillow-Green-Decoration-Deco-Snuggle-1241878.jpg",
-      19.99,
-      "A soft pillow!"
-    ),
-    new Product(
-      "A Carpet",
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Ardabil_Carpet.jpg/397px-Ardabil_Carpet.jpg",
-      89.99,
-      "A carpet which you might like - or not."
-    ),
-  ];
+  fetchProducts() {
+    this.productList = [
+      new Product(
+        "A Pillow",
+        "https://www.maxpixel.net/static/photo/2x/Soft-Pillow-Green-Decoration-Deco-Snuggle-1241878.jpg",
+        19.99,
+        "A soft pillow!"
+      ),
+      new Product(
+        "A Carpet",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Ardabil_Carpet.jpg/397px-Ardabil_Carpet.jpg",
+        89.99,
+        "A carpet which you might like - or not."
+      ),
+    ];
+    this.renderProducts();
+  }
+
+  renderProducts() {
+    for (const product of this.productList) {
+      new ProductItem(product, "prod-list");
+    }
+  }
 
   render() {
     this.createRootHtmlElement("ul", "product-list", [
       new ElementAttribute("id", "prod-list"),
     ]);
-    for (const product of this.products) {
-      const productItem = new ProductItem(product, "prod-list");
-      productItem.render();
+    if (this.productList && this.productList.length > 0) {
+      this.renderProducts();
     }
   }
 }
@@ -142,7 +158,6 @@ class App {
 
   static init() {
     const shop = new Shop();
-    shop.render();
     this.shoppingCart = shop.shoppingCart;
   }
 

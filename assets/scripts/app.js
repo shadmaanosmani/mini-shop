@@ -92,12 +92,19 @@ class ShoppingCart extends Component {
     );
   }
 
+  placeOrder() {
+    console.log("Ordering...");
+    console.log(this.productList);
+  }
+
   render() {
     const cartHtmlElement = this.createRootHtmlElement("section", "cart");
     cartHtmlElement.innerHTML = `
     <h2>Total: \$${0}<h2 />
     <button>Order now!</button>
   `;
+    const orderNowButton = cartHtmlElement.querySelector("button");
+    orderNowButton.addEventListener("click", () => this.placeOrder());
     this.totalHtmlElement = cartHtmlElement.querySelector("h2");
   }
 }

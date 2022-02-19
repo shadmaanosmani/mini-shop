@@ -40,10 +40,23 @@ class ShoppingCart {
   productList = [];
 
   addProduct(product) {
-    this.productList.push(product);
-    this.total.innerHTML = `
-    <h2>Total: \$${1}<h2 />
+    const updatedProductList = [...this.productList];
+    updatedProductList.push(product);
+    this.cartItems = updatedProductList;
+  }
+
+  set cartItems(productList) {
+    this.productList = productList;
+    this.totalHtmlElement.innerHTML = `
+    <h2>Total: \$${this.total.toFixed(2)}<h2 />
   `;
+  }
+
+  get total() {
+    return this.productList.reduce(
+      (previousValue, currentItem) => previousValue + currentItem.price,
+      0
+    );
   }
 
   render() {
@@ -52,7 +65,7 @@ class ShoppingCart {
     <h2>Total: \$${0}<h2 />
     <button>Order now!</button>
   `;
-    this.total = cartHtmlElement.querySelector("h2");
+    this.totalHtmlElement = cartHtmlElement.querySelector("h2");
     cartHtmlElement.className = "cart";
     return cartHtmlElement;
   }

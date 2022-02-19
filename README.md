@@ -1,1 +1,1 @@
-# mini-shop
+# Mini Shop
